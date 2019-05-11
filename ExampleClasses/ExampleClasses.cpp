@@ -1,7 +1,7 @@
 // 1990-17-1450
 // Jorge Eduardo Figueroa Melendez
 // Progra 1 - seccion A
-//Hola Jorge
+//Hola Hector
 
 #include <iostream>
 #include <conio.h>
