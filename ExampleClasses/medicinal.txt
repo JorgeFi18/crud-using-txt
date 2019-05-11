@@ -1,0 +1,6 @@
+1 manzanilla
+2 pericon
+3 Ruda
+4 Planta-de-baja
+5 Hierba-Buena
+6 Hector-este-es-un-parrafo
