@@ -1,0 +1,6 @@
+1 Manzanilla planta-para-dolor-de-estomago
+2 Ruda planta-para-aliviar-el-ojo
+3 Cilantro sirve-para-dolor-de-estomago
+4 Hierba-Buena quita-el-mal-aliento
+5 Canela ayuda-a-mejorar-el-dolor-de-garganta
+6 Aniz sirve-para-aliviar-el-dolor-de-cabeza
