@@ -41,6 +41,9 @@ void Menu::MenuPrincipalOpciones(int opcion)
 		break;
 	case 2:
 		break;
+	case 3:
+		MenuInventarioOpciones(MenuInventario());
+		break;
 	}
 }
 
@@ -163,6 +166,68 @@ void Menu::MenuCambioEstadoPlantaOpciones(int opcion, int tipoPlanta)
 		break;
 	case 3:
 		MenuTipoPlantaOpciones(MenuTipoPlanta(tipoPlanta), tipoPlanta);
+		break;
+	}
+}
+
+int Menu::MenuInventario()
+{
+	system("cls");
+	cout << "\n* * * * MENU INVENTARIO * * * *\n\n";
+	cout << "1) Inventario de plantas medicinales.\n";
+	cout << "2) Inventario de plantas silvestres.\n";
+	cout << "3) Inventario de plantas ornamentales.\n";
+	cout << "4) Iventario de insumos.\n";
+	cout << "5) Volver al menu planta.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
+	return opcion;
+}
+
+void Menu::MenuInventarioOpciones(int opcion)
+{
+	switch (opcion)
+	{
+		case 1:
+			MenuInventarioTipoOpciones(MenuInventarioTipo(1), 1);
+			break;
+		case 2:
+			MenuInventarioTipoOpciones(MenuInventarioTipo(2), 2);
+			break;
+		case 3:
+			MenuInventarioTipoOpciones(MenuInventarioTipo(3), 3);
+			break;
+		case 4:
+			MenuInventarioTipoOpciones(MenuInventarioTipo(4), 4);
+			break;
+		case 5:
+			break;
+	}
+}
+
+int Menu::MenuInventarioTipo(int tipo)
+{
+	system("cls");
+	cout << "\n* * * * MENU INVENTARIO * * * *\n\n";
+	cout << "Categoria: " << getNombrePlanta(tipo) <<endl;
+	cout << "1) Registro.\n";
+	cout << "2) Muestra.\n";
+	cout << "3) Volver al menu de inventario.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
+	return opcion;
+}
+
+void Menu::MenuInventarioTipoOpciones(int opcion, int tipo)
+{
+	switch (opcion)
+	{
+	case 1:
+	case 2:
+	case 3:
+		_planta.InventarioPlanta(tipo);
+		break;
+	case 4:
 		break;
 	}
 }

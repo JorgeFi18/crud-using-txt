@@ -10,4 +10,6 @@ public:
 	void ModificarPlanta(int tipoPlanta);
 	void CambioEstado(int tipoPlanta);
 	void CambioEstado(int tipoPlanta, bool alta);
+
+	void InventarioPlanta(int tipoPlanta);
 };

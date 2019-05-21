@@ -452,3 +452,10 @@ void Planta::CambioEstado(int tipoPlanta, bool alta)
 	rename("Plantas/temporal.txt", cstr);
 	EliminarDeHistorial(historico, codigoModificar);
 }
+
+void Planta::InventarioPlanta(int tipoPlanta)
+{
+	system("cls");
+	cout << "Inventario de plantas! " <<getNombrePlanta(tipoPlanta) <<endl;
+	system("pause");
+}

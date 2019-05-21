@@ -40,6 +40,9 @@ string getNombrePlanta(int tipoPlanta)
 	case 3:
 		nombre = "Ornamental";
 		break;
+	case 4:
+		nombre = "Insumo";
+		break;
 	}
 
 	return nombre;
