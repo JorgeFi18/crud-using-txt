@@ -1,6 +1,0 @@
-1 rosa
-21 margarita
-2 clavel
-3 tulipan
-4 cartucho
-5 orquidea
