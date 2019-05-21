@@ -1,4 +1,4 @@
-1 Rosa la-rosa-preferida-de-las-mujeres
+1 Planta-de-baja *Descripcion-no-disponible
 2 Margarita planta-economica
 3 Clavel colores-disponibles:-rojo,-blanco,-amarillo
 4 Girasol la-planta-mas-grande

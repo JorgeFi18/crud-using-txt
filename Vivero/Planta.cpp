@@ -86,6 +86,35 @@ bool Planta::PlantaDuplicada(int tipoPlanta, string nombre)
 	return duplicado;
 }
 
+void Planta::EliminarDeHistorial(string historial, int codigoPlanta)
+{
+	Planta_struct datos;
+	LeerArchivo.open(historial);
+	EscribirArchivo.open("Plantas/pivote.txt");
+	if(LeerArchivo.fail())
+	{
+	//do this
+	}
+	else
+	{
+		do {
+			LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta >> datos.descripcionPlanta;
+			if (datos.numeroPlanta != codigoPlanta)
+			{
+				EscribirArchivo <<endl << datos.numeroPlanta << " " << datos.nombrePlanta << " " << datos.descripcionPlanta;
+			}
+		} while (!LeerArchivo.eof());
+	}
+
+	LeerArchivo.close();
+	EscribirArchivo.close();
+
+	const char *cstr = historial.c_str();
+	remove(cstr);
+	rename("Plantas/pivote.txt", cstr);
+	return;
+}
+
 //Public
 void Planta::RegistrarPlanta(int tipoPlanta)
 {
@@ -292,28 +321,50 @@ void Planta::CambioEstado(int tipoPlanta)
 
 	do
 	{
-		LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta;
+		LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta >> datos.descripcionPlanta;
 		if (datos.numeroPlanta == codigoModificar && datos.nombrePlanta != "Planta-de-baja")
 		{
-			EscribirArchivo << datos.numeroPlanta << " " << datos.nombrePlanta << endl;
+			EscribirArchivo << endl << datos.numeroPlanta << " " << datos.nombrePlanta <<" " <<datos.descripcionPlanta;
 			if (datos.numeroPlanta > 1) 
 			{
-				nuevoArchivo << endl << datos.numeroPlanta << " " << "Planta-de-baja";
+				nuevoArchivo 
+					<< endl 
+					<< datos.numeroPlanta 
+					<< " " 
+					<< "Planta-de-baja" 
+					<<" " 
+					<<"*Descripcion-no-disponible";
 			}
 			else
 			{
-				nuevoArchivo << datos.numeroPlanta << " " << "Planta-de-baja";
+				nuevoArchivo 
+					<< datos.numeroPlanta 
+					<< " " 
+					<< "Planta-de-baja" 
+					<<" " 
+					<<"*Descripcion-no-disponible";
 			}
 		}
 		else
 		{
 			if (datos.numeroPlanta > 1) 
 			{
-				nuevoArchivo << endl << datos.numeroPlanta << " " << datos.nombrePlanta;
+				nuevoArchivo 
+					<< endl 
+					<< datos.numeroPlanta 
+					<< " " 
+					<< datos.nombrePlanta
+					<< " "
+					<< datos.descripcionPlanta;
 			}
 			else
 			{
-				nuevoArchivo << datos.numeroPlanta << " " << datos.nombrePlanta;
+				nuevoArchivo 
+					<< datos.numeroPlanta 
+					<< " " 
+					<< datos.nombrePlanta
+					<< " "
+					<< datos.descripcionPlanta;
 			}
 				
 		}
@@ -347,13 +398,14 @@ void Planta::CambioEstado(int tipoPlanta, bool alta)
 
 	EscribirArchivo.open("Plantas/temporal.txt");
 
-	string nombreReal;
+	string nombreReal, descripcionReal;
 	do
 	{
-		historial >> datos.numeroPlanta >> datos.nombrePlanta;
+		historial >> datos.numeroPlanta >> datos.nombrePlanta >>datos.descripcionPlanta;
 		if (datos.numeroPlanta == codigoModificar)
 		{
 			nombreReal = datos.nombrePlanta;
+			descripcionReal = datos.descripcionPlanta;
 		}
 		
 	} while (!historial.eof());
@@ -361,22 +413,33 @@ void Planta::CambioEstado(int tipoPlanta, bool alta)
 
 	do
 	{
-		LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta;
+		LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta >> datos.descripcionPlanta;
 		if (datos.numeroPlanta == codigoModificar)
 		{
 
 			if(datos.numeroPlanta > 1)
-				EscribirArchivo <<endl << datos.numeroPlanta << " " << nombreReal;
+				EscribirArchivo <<endl << datos.numeroPlanta << " " << nombreReal <<" " << descripcionReal;
 			else
-				EscribirArchivo << datos.numeroPlanta << " " << nombreReal;
+				EscribirArchivo << datos.numeroPlanta << " " << nombreReal <<" " << descripcionReal;
 			
 		}
 		else
 		{
 			if (datos.numeroPlanta > 1)
-				EscribirArchivo << endl << datos.numeroPlanta << " " << datos.nombrePlanta;
+				EscribirArchivo 
+				<< endl 
+				<< datos.numeroPlanta 
+				<< " " 
+				<< datos.nombrePlanta 
+				<<" " 
+				<<datos.descripcionPlanta;
 			else
-				EscribirArchivo << datos.numeroPlanta << " " << datos.nombrePlanta;
+				EscribirArchivo 
+				<< datos.numeroPlanta 
+				<< " " 
+				<< datos.nombrePlanta 
+				<<" " 
+				<< datos.descripcionPlanta;
 		}
 	} while (!LeerArchivo.eof());
 
@@ -387,5 +450,5 @@ void Planta::CambioEstado(int tipoPlanta, bool alta)
 	const char *cstr = archivo.c_str();
 	remove(cstr);
 	rename("Plantas/temporal.txt", cstr);
-
+	EliminarDeHistorial(historico, codigoModificar);
 }
