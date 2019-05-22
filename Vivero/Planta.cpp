@@ -18,6 +18,14 @@ struct Planta_struct
 	string descripcionPlanta;
 };
 
+struct Planta_inventario_struct
+{
+	int correlativo;
+	int codigoPlanta;
+	int existencia;
+	int costo;
+};
+
 //Globales
 string nombrePlanta = "";
 ifstream LeerArchivo;
@@ -42,6 +50,31 @@ int Planta::Correlativo(int tipoPlanta)
 		{
 			LeerArchivo >> datos.numeroPlanta >> datos.nombrePlanta >> datos.descripcionPlanta;
 			contador = datos.numeroPlanta;
+			isEnd = LeerArchivo.eof();
+		} while (!isEnd);
+	}
+	LeerArchivo.close();
+	return contador + 1;
+}
+
+int Planta::CorrelativoInventario(int tipoPlanta)
+{
+	int contador = 0;
+	nombrePlanta = getNombrePlanta(tipoPlanta);
+	string archivo = "Plantas/inventario_" + nombrePlanta + ".txt";
+	LeerArchivo.open(archivo);
+	Planta_inventario_struct datos;
+	if (LeerArchivo.fail())
+	{
+		contador = 0;
+	}
+	else
+	{
+		bool isEnd = false;
+		do
+		{
+			LeerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
+			contador = datos.correlativo;
 			isEnd = LeerArchivo.eof();
 		} while (!isEnd);
 	}
@@ -113,6 +146,50 @@ void Planta::EliminarDeHistorial(string historial, int codigoPlanta)
 	remove(cstr);
 	rename("Plantas/pivote.txt", cstr);
 	return;
+}
+
+bool Planta::PlantaEnInventario(int tipoPlanta, int codigoPlanta)
+{
+	bool existe = false;
+	Planta_inventario_struct datos;
+	string archivo = "Plantas/inventario_" + getNombrePlanta(tipoPlanta) + ".txt";
+	LeerArchivo.open(archivo);
+	if (LeerArchivo.fail())
+	{
+		return existe;
+	}
+	else 
+	{
+		do 
+		{
+			LeerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
+			if (datos.codigoPlanta == codigoPlanta)
+			{
+				existe = true;
+			}
+		} while (!LeerArchivo.eof());
+	}
+	LeerArchivo.close();
+	return existe;
+}
+
+string Planta::BuscarNombrePlanta(int tipoPlanta, int codigoPlanta)
+{
+	string nombreDePlanta;
+	string archivo = "Plantas/" + getNombrePlanta(tipoPlanta) + ".txt";
+	Planta_struct datos;
+	ifstream leerArchivo(archivo);
+	do
+	{
+		leerArchivo >> datos.numeroPlanta >> datos.nombrePlanta >> datos.descripcionPlanta;
+		if (datos.numeroPlanta == codigoPlanta)
+		{
+			nombreDePlanta = datos.nombrePlanta;
+		}
+	} while (!leerArchivo.eof());
+	
+	leerArchivo.close();
+	return nombreDePlanta;
 }
 
 //Public
@@ -286,7 +363,7 @@ void Planta::ModificarPlanta(int tipoPlanta)
 	} while (!isEnd);
 
 	if (plantaBloqueada) {
-		cout << "\n\tNo se permite modificar nombre si la planta esta de baja!\n";
+		std::cout << "\n\tNo se permite modificar nombre si la planta esta de baja!\n";
 		system("pause");
 	}
 
@@ -456,6 +533,81 @@ void Planta::CambioEstado(int tipoPlanta, bool alta)
 void Planta::InventarioPlanta(int tipoPlanta)
 {
 	system("cls");
-	cout << "Inventario de plantas! " <<getNombrePlanta(tipoPlanta) <<endl;
-	system("pause");
+	int codigoPlanta;
+	string archivo = "Plantas/inventario_" + getNombrePlanta(tipoPlanta) + ".txt";
+	Planta_inventario_struct datos;
+	cout << "Registro de inventario de plantas: " <<getNombrePlanta(tipoPlanta) <<endl;
+	MostrarPlantas(tipoPlanta);
+	cout << "\n\n ---------------------------------------------\n";
+	cout << "Ingrese codigo de planta: ";
+	cin >> codigoPlanta;
+
+	if (PlantaEnInventario(tipoPlanta, codigoPlanta)) 
+	{
+		cout << "\t\nPlanta ya existe en inventario\n\n";
+		system("pause");
+	}
+	else 
+	{
+		if (BuscarNombrePlanta(tipoPlanta, codigoPlanta) == "Planta-de-baja")
+		{
+			cout << "\t\nNo se puede realizar la operacion si la planta esta de baja \n\n";
+			system("pause");
+		}
+		else
+		{
+			datos.correlativo = CorrelativoInventario(tipoPlanta);
+			cout << "Correlativo: " << datos.correlativo << endl;
+			datos.codigoPlanta = codigoPlanta;
+			std::cout << "Ingrese existencia: ";
+			cin >> datos.existencia;
+			std::cout << "Ingrese precio: ";
+			cin >> datos.costo;
+
+			EscribirArchivo.open(archivo, ios::app);
+			if (datos.correlativo > 1)
+			{
+				EscribirArchivo << endl << datos.correlativo << " " << datos.codigoPlanta << " " << datos.existencia << " " << datos.costo;
+			}
+			else
+			{
+				EscribirArchivo << datos.correlativo << " " << datos.codigoPlanta << " " << datos.existencia << " " << datos.costo;
+			}
+			EscribirArchivo.close();
+			cout << "\n\tRegistro realizado con exito!";
+		}
+	}
+	return;
+}
+
+void Planta::ListarInventarioPlanta(int tipoPlanta)
+{
+	system("cls");
+	int codigoPlanta;
+	string archivo = "Plantas/inventario_" + getNombrePlanta(tipoPlanta) + ".txt";
+	Planta_inventario_struct datos;
+	cout << "Listado de inventario plantas: " << getNombrePlanta(tipoPlanta) << endl <<endl;
+
+	LeerArchivo.open(archivo);
+
+	if (LeerArchivo.fail())
+	{
+		cout << "\t\nOcurrio un erro al tratar de abrir el archivo\n\n";
+	}
+	else
+	{
+		do
+		{
+			LeerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
+			cout << "\tCorrelativo: " << datos.correlativo << endl;
+			cout << "\tCodigo de Planta: " << datos.codigoPlanta << endl;
+			cout << "\tNombre de Planta: " << serializeString(BuscarNombrePlanta(tipoPlanta, datos.codigoPlanta),
+				true) << endl;
+			cout << "\tExistencia: " << datos.existencia << endl;
+			cout << "\tCosto: " << "Q." << datos.costo <<endl;
+			cout << "\t--------------------------------------------------------------------\n\n";
+		} while (!LeerArchivo.eof());
+	}
+	LeerArchivo.close();
+	return;
 }

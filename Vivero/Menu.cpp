@@ -178,7 +178,7 @@ int Menu::MenuInventario()
 	cout << "2) Inventario de plantas silvestres.\n";
 	cout << "3) Inventario de plantas ornamentales.\n";
 	cout << "4) Iventario de insumos.\n";
-	cout << "5) Volver al menu planta.\n";
+	cout << "5) Volver al menu principal.\n";
 	cout << "\tSeleccione una opcion: ";
 	cin >> opcion;
 	return opcion;
@@ -201,6 +201,7 @@ void Menu::MenuInventarioOpciones(int opcion)
 			MenuInventarioTipoOpciones(MenuInventarioTipo(4), 4);
 			break;
 		case 5:
+			MenuPrincipalOpciones(MenuPrincipal());
 			break;
 	}
 }
@@ -223,11 +224,16 @@ void Menu::MenuInventarioTipoOpciones(int opcion, int tipo)
 	switch (opcion)
 	{
 	case 1:
-	case 2:
-	case 3:
 		_planta.InventarioPlanta(tipo);
+		MenuInventarioOpciones(MenuInventario());
 		break;
-	case 4:
+	case 2:
+		_planta.ListarInventarioPlanta(tipo);
+		system("pause");
+		MenuInventarioOpciones(MenuInventario());
+		break;
+	case 3:
+		MenuInventarioOpciones(MenuInventario());
 		break;
 	}
 }
