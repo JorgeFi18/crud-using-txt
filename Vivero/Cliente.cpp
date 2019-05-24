@@ -199,6 +199,7 @@ void Cliente::RegistrarCliente()
 	system("cls");
 	Cliente_struct datosCliente;
 	bool ClienteDuplicado = false;
+	datosCliente.numeroCliente = Correlativo();
 	cout << "\nRegistro de Cliente: " << nombreCliente << "\n\n";
 	cout << "Codigo de Cliente: " << datosCliente.numeroCliente << endl;
 	do
@@ -252,7 +253,6 @@ void Cliente::MostrarCliente()
 	system("cls");
 	LeerArchivo3.open(archivo);
 	cout << "\nCatalogo de Clientes" << "\n";
-	cout << "Tipo de Clientes: " << nombreCliente << "\n\n";
 	if (LeerArchivo3.fail())
 	{
 		cout << "\n\n\tOcurrio un error al tratar de abrir el archivo *" << archivo << "* intente mas tarde.\n";
@@ -282,7 +282,6 @@ void Cliente::ModificarCliente()
 	bool ClienteDuplicado = false;
 	Cliente_struct datos;
 	cout << "Modificar nombre de Cliente\n";
-	cout << "Tipo de Cliente: " << nombreCliente << "\n\n";
 	string archivo = "Clientes/cliente.txt";
 	MostrarCliente();
 
