@@ -27,5 +27,6 @@ Menu _menu;
 
 int main()
 {
+	system("Color 1F");
 	_menu.MenuPrincipalOpciones(_menu.MenuPrincipal());
 }

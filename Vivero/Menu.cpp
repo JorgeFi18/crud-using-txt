@@ -6,12 +6,16 @@
 #include "Menu.h"
 #include "Planta.h"
 #include "Helpers.h"
+#include "Insumo.h"
+#include "Cliente.h"
 
 //Namespaces
 using namespace std;
 
 //clases
 Planta _planta;
+Insumo _Insumo;
+Cliente _Cliente;
 
 int opcion = 0;
 string answer;
@@ -40,10 +44,18 @@ void Menu::MenuPrincipalOpciones(int opcion)
 		MenuPlantasOpciones(MenuPlantas());
 		break;
 	case 2:
+		//Hector
+		MenuInsumosOpciones(MenuInsumos());
 		break;
 	case 3:
 		MenuInventarioOpciones(MenuInventario());
 		break;
+
+	case 4:
+		//Hector
+		MenuClientesOpciones(MenuClientes());
+		break;
+
 	}
 }
 
@@ -236,4 +248,120 @@ void Menu::MenuInventarioTipoOpciones(int opcion, int tipo)
 		MenuInventarioOpciones(MenuInventario());
 		break;
 	}
+}
+
+//hector
+void Menu::MenuInsumosOpciones(int opcion)
+{
+	switch (opcion)
+	{
+	case 1:	
+		_Insumo.RegistrarInsumo();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 2:
+		_Insumo.MostrarInsumo();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 3:
+		_Insumo.ModificarInsumo();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 4:
+		_Insumo.CambioEstado();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 5:
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 6:
+		exit(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Menu::MenuClientesOpciones(int opcion)
+{
+	switch (opcion)
+	{
+	case 1:
+		_Cliente.RegistrarCliente();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 2:
+		_Cliente.MostrarCliente();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 3:
+		_Cliente.ModificarCliente();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 4:
+		_Cliente.CambioEstado();
+		system("pause");
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 5:
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+
+	case 6:
+		exit(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+//Hector
+int Menu::MenuInsumos()
+{
+	system("cls");
+	cout << "\n* * * * MENU INSUMOS * * * *\n\n";
+	cout << "1) Registro nuevo insumo.\n";
+	cout << "2) Muestra catalogo de insumos.\n";
+	cout << "3) Modificacion de insumo.\n";
+	cout << "4) Cambio de estado insumo.\n";
+	cout << "5) Regresar al menu.\n";
+	cout << "6) Salir.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
+
+	return opcion;
+}
+
+int Menu::MenuClientes()
+{
+	system("cls");
+	cout << "\n* * * * MENU Cliente * * * *\n\n";
+	cout << "1) Registro nuevo cliente.\n";
+	cout << "2) Muestra catalogo de cliente.\n";
+	cout << "3) Modificacion de cliente.\n";
+	cout << "4) Cambio de estado cliente.\n";
+	cout << "5) Regresar al menu.\n";
+	cout << "6) Salir.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
+
+	return opcion;
 }

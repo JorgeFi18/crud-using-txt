@@ -11,6 +11,8 @@ public:
 	int MenuInventario ();
 	int MenuInventarioTipo(int tipo);
 
+	int MenuInsumos();
+	int MenuClientes();
 	//Opciones
 	void MenuPrincipalOpciones (int opcion);
 
@@ -20,4 +22,7 @@ public:
 
 	void MenuInventarioOpciones(int opcion);
 	void MenuInventarioTipoOpciones(int opcion, int tipo);
+
+	void MenuInsumosOpciones(int opcion);
+	void MenuClientesOpciones(int opcion);
 };
