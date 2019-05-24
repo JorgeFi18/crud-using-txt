@@ -199,6 +199,7 @@ void Insumo::RegistrarInsumo()
 	system("cls");
 	Insumo_struct datosInsumo;
 	bool insumoDuplicado = false;
+	datosInsumo.numeroInsumo = Correlativo();
 	cout << "\nRegistro de insumo: " << nombreInsumo << "\n\n";
 	cout << "Codigo de insumo: " << datosInsumo.numeroInsumo << endl;
 	do
@@ -217,7 +218,7 @@ void Insumo::RegistrarInsumo()
 	while (isspace(cin.peek())) cin.ignore();
 	getline(cin, datosInsumo.descripcionInsumo);
 
-	string archivo2 = "insumo.txt";
+	string archivo2 = "Insumos/insumo.txt";
 	EscribirArchivo2.open(archivo2, ios::app);
 	if (datosInsumo.numeroInsumo > 1)
 	{
@@ -251,8 +252,7 @@ void Insumo::MostrarInsumo()
 
 	system("cls");
 	LeerArchivo2.open(archivo);
-	cout << "\nCatalogo de insumos" << "\n";
-	cout << "Tipo de Insumos: " << nombreInsumo << "\n\n";
+	cout << "\nCatalogo de insumos" << "\n\n";
 	if (LeerArchivo2.fail())
 	{
 		cout << "\n\n\tOcurrio un error al tratar de abrir el archivo *" << archivo << "* intente mas tarde.\n";
@@ -282,7 +282,6 @@ void Insumo::ModificarInsumo()
 	bool insumoDuplicado = false;
 	Insumo_struct datos;
 	cout << "Modificar nombre de insumo\n";
-	cout << "Tipo de insumo: " << nombreInsumo << "\n\n";
 	string archivo = "Insumos/insumo.txt";
 	MostrarInsumo();
 

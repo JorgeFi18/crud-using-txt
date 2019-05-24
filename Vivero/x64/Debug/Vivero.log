@@ -1,2 +1,3 @@
-﻿  Menu.cpp
+﻿  Insumo.cpp
+c:\users\jorge\documents\visual studio 2017\c++\umg\progra1\vivero\vivero\insumo.cpp(582): warning C4101: 'codigoInsumo2': unreferenced local variable
   Vivero.vcxproj -> C:\Users\Jorge\Documents\Visual Studio 2017\c++\UMG\Progra1\Vivero\x64\Debug\Vivero.exe
