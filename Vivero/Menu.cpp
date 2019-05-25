@@ -347,26 +347,30 @@ void Menu::MenuClientesOpciones(int opcion)
 	{
 	case 1:
 		_Cliente.RegistrarCliente();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea registrar otro cliente (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuClientesOpciones(1); }
+		else { MenuClientesOpciones(MenuClientes()); }
 		break;
 
 	case 2:
 		_Cliente.MostrarCliente();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea listar de nuevo los clientes (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuClientesOpciones(2); }
+		else { MenuClientesOpciones(MenuClientes()); }
 		break;
 
 	case 3:
 		_Cliente.ModificarCliente();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea modificar otro cliente (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuClientesOpciones(3); }
+		else { MenuClientesOpciones(MenuClientes()); }
 		break;
 
 	case 4:
-		_Cliente.CambioEstado();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		MenuCambioEstadoClientesOpciones(MenuCambioEstadoClientes());
 		break;
 
 	case 5:
@@ -379,6 +383,29 @@ void Menu::MenuClientesOpciones(int opcion)
 
 	default:
 		break;
+	}
+}
+
+void Menu::MenuCambioEstadoClientesOpciones(int opcion)
+{
+	switch (opcion)
+	{
+	case 1:
+		_Cliente.CambioEstado();
+		cout << "\n\nDesea dar de baja otro cliente (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuCambioEstadoClientesOpciones(1); }
+		else { MenuCambioEstadoClientesOpciones(MenuCambioEstadoClientes()); }
+		break;
+	case 2:
+		_Cliente.CambioEstado(true);
+		cout << "\n\nDesea dar de alta otro cliente (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuCambioEstadoClientesOpciones(2); }
+		else { MenuCambioEstadoClientesOpciones(MenuCambioEstadoClientes()); }
+		break;
+	case 3:
+		MenuClientesOpciones(MenuClientes());
 	}
 }
 
@@ -412,5 +439,17 @@ int Menu::MenuClientes()
 	cout << "\tSeleccione una opcion: ";
 	cin >> opcion;
 
+	return opcion;
+}
+
+int Menu::MenuCambioEstadoClientes()
+{
+	system("cls");
+	cout << "\n* * * * MENU CAMBIO DE ESTADO * * * *\n\n";
+	cout << "1) Dar cliente de baja.\n";
+	cout << "2) Dar cliente de alta.\n";
+	cout << "3) Volver al menu cliente.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
 	return opcion;
 }

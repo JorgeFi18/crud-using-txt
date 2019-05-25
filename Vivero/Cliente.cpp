@@ -198,27 +198,27 @@ void Cliente::RegistrarCliente()
 {
 	system("cls");
 	Cliente_struct datosCliente;
-	bool ClienteDuplicado = false;
+	bool clienteDuplicado = false;
 	datosCliente.numeroCliente = Correlativo();
-	cout << "\nRegistro de Cliente: " << nombreCliente << "\n\n";
+	cout << "\nRegistro de Cliente\n\n";
 	cout << "Codigo de Cliente: " << datosCliente.numeroCliente << endl;
 	do
 	{
 		cout << "Ingrese nombre del Cliente: ";
 		while (isspace(cin.peek())) cin.ignore();
 		getline(cin, datosCliente.nombreCliente);
-		//ClienteDuplicado = ClienteDuplicado(serializeString(datosCliente.nombreCliente, false));
-		if (ClienteDuplicado)
+		clienteDuplicado = ClienteDuplicado(serializeString(datosCliente.nombreCliente, false));
+		if (clienteDuplicado)
 		{
 			cout << "\n Cliente duplicada!\n\n";
 		}
-	} while (ClienteDuplicado);
+	} while (clienteDuplicado);
 
 	cout << "Ingrese descripcion del Cliente: ";
 	while (isspace(cin.peek())) cin.ignore();
 	getline(cin, datosCliente.descripcionCliente);
 
-	string archivo2 = "Clientes/Cliente.txt";
+	string archivo2 = "Clientes/cliente.txt";
 	EscribirArchivo3.open(archivo2, ios::app);
 	if (datosCliente.numeroCliente > 1)
 	{

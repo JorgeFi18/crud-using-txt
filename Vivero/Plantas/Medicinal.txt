@@ -3,4 +3,4 @@
 3 Cilantro sirve-para-dolor-de-estomago
 4 Planta-de-baja *Descripcion-no-disponible
 5 Canela ayuda-a-mejorar-el-dolor-de-garganta
-6 Aniz sirve-para-aliviar-el-dolor-de-cabeza
+6 Aniz sirve-para-aliviar-el-dolor-de-rodilla
