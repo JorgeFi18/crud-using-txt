@@ -1,1 +1,4 @@
-1 Machete Sirve-para-machetiar-huecos
+1 Machete Sirve-para-machetiar
+2 Insumo-de-baja *Descripcion-no-disponible
+3 Piocha Sirve-para-picar-tierra
+4 Tijera sirve-para-podar-arboles-y-arbustos

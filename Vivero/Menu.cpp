@@ -236,47 +236,96 @@ void Menu::MenuInventarioTipoOpciones(int opcion, int tipo)
 	switch (opcion)
 	{
 	case 1:
-		_planta.InventarioPlanta(tipo);
+		if (tipo < 4)
+			_planta.InventarioPlanta(tipo);
+		else
+			_Insumo.InventarioInsumo();
+
 		MenuInventarioOpciones(MenuInventario());
 		break;
 	case 2:
-		_planta.ListarInventarioPlanta(tipo);
-		system("pause");
-		MenuInventarioOpciones(MenuInventario());
-		break;
-	case 3:
+		if (tipo < 4)
+			_planta.ListarInventarioPlanta(tipo);
+		else
+			_Insumo.ListarInventarioInsumo();
+
+		cout << "\n\nDesea listar de nuevo el inventario (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuInventarioTipoOpciones(2, tipo); }
+		else { MenuInventarioOpciones(MenuInventario()); }
 		MenuInventarioOpciones(MenuInventario());
 		break;
 	}
 }
 
 //hector
+
+int Menu::MenuCambioEstadoInsumo()
+{
+	system("cls");
+	cout << "\n* * * * MENU CAMBIO DE ESTADO * * * *\n\n";
+	cout << "1) Dar insumo de baja.\n";
+	cout << "2) Dar imsumo de alta.\n";
+	cout << "3) Volver al menu insumo.\n";
+	cout << "\tSeleccione una opcion: ";
+	cin >> opcion;
+	return opcion;
+}
+
+void Menu::MenuCambioEstadoInsumoOpciones(int opcion)
+{
+	switch (opcion)
+	{
+	case 1:
+		_Insumo.CambioEstado();
+		cout << "\n\nDesea dar de baja otro insumo (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuCambioEstadoInsumoOpciones(1); }
+		else { MenuCambioEstadoInsumoOpciones(MenuCambioEstadoInsumo()); }
+		break;
+	case 2:
+		_Insumo.CambioEstado(true);
+		cout << "\n\nDesea dar de alta otro insumo (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuCambioEstadoInsumoOpciones(2); }
+		else { MenuCambioEstadoInsumoOpciones(MenuCambioEstadoInsumo()); }
+		break;
+	case 3:
+		MenuInsumosOpciones(MenuInsumos());
+		break;
+	}
+}
+
 void Menu::MenuInsumosOpciones(int opcion)
 {
 	switch (opcion)
 	{
 	case 1:	
 		_Insumo.RegistrarInsumo();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea registrar otro insumo (s/n): ";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuInsumosOpciones(1); }
+		else { MenuInsumosOpciones(MenuInsumos()); }
 		break;
 
 	case 2:
 		_Insumo.MostrarInsumo();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea listar los insumos de nuevo (s/n):";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuInsumosOpciones(2); }
+		else { MenuInsumosOpciones(MenuInsumos()); }
 		break;
 
 	case 3:
 		_Insumo.ModificarInsumo();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		cout << "\n\nDesea modificar otro insumo (s/n):";
+		cin >> answer;
+		if (validateAnswer(answer)) { MenuInsumosOpciones(3); }
+		else { MenuInsumosOpciones(MenuInsumos()); }
 		break;
 
 	case 4:
-		_Insumo.CambioEstado();
-		system("pause");
-		MenuPrincipalOpciones(MenuPrincipal());
+		MenuCambioEstadoInsumoOpciones(MenuCambioEstadoInsumo());
 		break;
 
 	case 5:
