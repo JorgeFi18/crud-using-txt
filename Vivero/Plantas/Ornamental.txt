@@ -3,3 +3,4 @@
 3 Clavel colores-disponibles:-rojo,-blanco,-amarillo
 4 Girasol la-planta-mas-grande
 5 Ortencia planta-de-clima-frio
+6 Cactus Planta-con-espinas

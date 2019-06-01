@@ -1,0 +1,5 @@
+
+1 1 Ruda 25 6 150
+2 1 Lechuguilla 10 8 80
+3 2 Margarita 100 25 2500
+4 3 Tijera 20 60 1200

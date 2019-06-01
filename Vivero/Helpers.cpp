@@ -1,4 +1,6 @@
 #include <string>
+#include <stdio.h>  
+#include <windows.h>  
 using namespace std;
 
 string serializeString(string str, bool reverse)
@@ -10,6 +12,20 @@ string serializeString(string str, bool reverse)
 		from = "-";
 		to = " ";
 	}
+
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != string::npos)
+	{
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length();
+	}
+	return str;
+}
+
+string removeBreak(string str)
+{
+	string from = "\n";
+	string to = "-";
 
 	size_t start_pos = 0;
 	while ((start_pos = str.find(from, start_pos)) != string::npos)
@@ -46,4 +62,13 @@ string getNombrePlanta(int tipoPlanta)
 	}
 
 	return nombre;
+}
+
+void gotoxy(int x, int y) {
+	HANDLE hcon;
+	hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD dwPos;
+	dwPos.X = x;
+	dwPos.Y = y;
+	SetConsoleCursorPosition(hcon, dwPos);
 }

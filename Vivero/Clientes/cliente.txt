@@ -1,3 +1,7 @@
-1 Hector-Guerra nuevo-cliente
-2 Jorge-Figueroa cliente-recurrente
-3 Juan-Martinez Cliente-mayorista
+1 123456788 Hector-Guerra Zaragoza
+2 123456789 Junior-Perez Chimaltenango
+3 NIT-no-disponible Cliente-de-baja *Direccion-no-disponible
+4 987654321 William-Satz San-Lucas
+5 123654789 Christian-Bravo Villa-Nueva
+6 010101011 Pablo-Porras Villa-nueva
+7 000022222 nuevo test

@@ -11,6 +11,10 @@ public:
 
 	void InventarioInsumo();
 	void ListarInventarioInsumo();
+	int BuscarDatos(int codigoInsumo, std::string tipoDato);
+	int SeleccionarInsumo(std::string archivo, int nFactura);
+
+	void ActualizarExistencia(std::string archivo, int codigoPlanta, int cantidad);
 
 private:
 	int Correlativo();

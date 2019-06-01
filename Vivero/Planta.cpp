@@ -192,6 +192,30 @@ string Planta::BuscarNombrePlanta(int tipoPlanta, int codigoPlanta)
 	return nombreDePlanta;
 }
 
+int Planta::BuscarDatos(int tipoPlanta, int codigoPlanta, string tipoDato)
+{
+	int dato;
+	string archivo = "Plantas/inventario_" + getNombrePlanta(tipoPlanta) + ".txt";
+	Planta_inventario_struct datos;
+	ifstream leerArchivo(archivo);
+	do
+	{
+		leerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
+		if (datos.correlativo == codigoPlanta)
+		{
+			if(tipoDato == "existencia")
+				dato = datos.existencia;
+			if (tipoDato == "costo")
+				dato = datos.costo;
+			if (tipoDato == "codigo")
+				dato = datos.codigoPlanta;
+		}
+	} while (!leerArchivo.eof());
+
+	leerArchivo.close();
+	return dato;
+}
+
 //Public
 void Planta::RegistrarPlanta(int tipoPlanta)
 {
@@ -600,7 +624,6 @@ void Planta::ListarInventarioPlanta(int tipoPlanta)
 		{
 			LeerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
 			cout << "\tCorrelativo: " << datos.correlativo << endl;
-			cout << "\tCodigo de Planta: " << datos.codigoPlanta << endl;
 			cout << "\tNombre de Planta: " << serializeString(BuscarNombrePlanta(tipoPlanta, datos.codigoPlanta),
 				true) << endl;
 			cout << "\tExistencia: " << datos.existencia << endl;
@@ -609,5 +632,123 @@ void Planta::ListarInventarioPlanta(int tipoPlanta)
 		} while (!LeerArchivo.eof());
 	}
 	LeerArchivo.close();
+	return;
+}
+
+int Planta::SeleccionarPlanta(string archivo, int nFactura, int tipoPlanta)
+{
+	int productoSeleccionado, cantidad, existencia, precioUnitario, codigoPlanta;
+	string agregar, archivoFactura;
+	ListarInventarioPlanta(tipoPlanta);
+	cout << "Seleccione producto para comprar: ";
+	cin >> productoSeleccionado;
+	codigoPlanta = BuscarDatos(tipoPlanta, productoSeleccionado, "codigo");
+	cout << "\t" << serializeString(BuscarNombrePlanta(tipoPlanta, codigoPlanta), true) <<endl;
+	do {
+		cout << "Cantidad de producto a comprar :";
+		cin >> cantidad;
+		existencia = BuscarDatos(tipoPlanta, productoSeleccionado, "existencia");
+		if (cantidad > existencia)
+		{
+			cout << "\nNo hay suficiente producto!\n";
+			cout << "*Puede comprar una cantidad menor o igual a: " << existencia <<endl;
+		}
+	} while (cantidad > existencia);
+
+	cout << "Desea agregar producto (s/n): ";
+	cin >> agregar;
+	if (validateAnswer(agregar)) 
+	{
+		archivoFactura = "Facturas/factura_" + std::to_string(nFactura) + ".txt";
+		precioUnitario = BuscarDatos(tipoPlanta, productoSeleccionado, "costo");
+		EscribirArchivo.open(archivoFactura, ios::app);
+		EscribirArchivo
+			<< endl
+			<< tipoPlanta
+			<< " "
+			<< productoSeleccionado
+			<< " "
+			<< serializeString(BuscarNombrePlanta(tipoPlanta, codigoPlanta), false)
+			<< " "
+			<< cantidad
+			<< " "
+			<< precioUnitario
+			<< " "
+			<< (precioUnitario * cantidad);
+		ActualizarExistencia(archivo, productoSeleccionado, cantidad);
+		EscribirArchivo.close();
+	}
+	
+	return 0;
+}
+
+void Planta::ActualizarExistencia(string archivo, int codigoPlanta, int cantidad)
+{
+	LeerArchivo.open(archivo);
+	ofstream pivote("Plantas/inventario-pivote.txt");
+	Planta_inventario_struct datos;
+	do
+	{
+		LeerArchivo >> datos.correlativo >> datos.codigoPlanta >> datos.existencia >> datos.costo;
+		if (datos.correlativo == codigoPlanta) {
+			if (datos.correlativo > 1)
+			{
+				pivote
+					<< endl
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoPlanta
+					<< " "
+					<< (datos.existencia - cantidad)
+					<< " "
+					<< datos.costo;
+			}
+			else
+			{
+				pivote
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoPlanta
+					<< " "
+					<< (datos.existencia - cantidad)
+					<< " "
+					<< datos.costo;
+			}
+		}
+		else
+		{
+			if (datos.correlativo > 1)
+			{
+				pivote
+					<< endl
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoPlanta
+					<< " "
+					<< datos.existencia
+					<< " "
+					<< datos.costo;
+			}
+			else
+			{
+				pivote
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoPlanta
+					<< " "
+					<< datos.existencia
+					<< " "
+					<< datos.costo;
+			}
+		}
+	} while (!LeerArchivo.eof());
+
+	LeerArchivo.close();
+	pivote.close();
+
+	const char *cstr = archivo.c_str();
+	remove(cstr);
+	rename("Plantas/inventario-pivote.txt", cstr);
+
 	return;
 }

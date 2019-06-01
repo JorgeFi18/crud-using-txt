@@ -605,3 +605,145 @@ void Insumo::ListarInventarioInsumo()
 	LeerArchivo2.close();
 	return;
 }
+
+int Insumo::BuscarDatos(int codigoInsumo, string tipoDato)
+{
+	int dato;
+	string archivo = "Insumos/inventario_insumo.txt";
+	Insumo_inventario_struct datos;
+	ifstream leerArchivo(archivo);
+	do
+	{
+		leerArchivo >> datos.correlativo >> datos.codigoInsumo2 >> datos.existencia >> datos.costo;
+		if (datos.correlativo == codigoInsumo)
+		{
+			if (tipoDato == "existencia")
+				dato = datos.existencia;
+			if (tipoDato == "costo")
+				dato = datos.costo;
+			if (tipoDato == "codigo")
+				dato = datos.codigoInsumo2;
+		}
+	} while (!leerArchivo.eof());
+
+	leerArchivo.close();
+	return dato;
+}
+
+
+int Insumo::SeleccionarInsumo(string archivo, int nFactura)
+{
+	int productoSeleccionado, cantidad, existencia, precioUnitario, codigoPlanta;
+	string agregar, archivoFactura;
+	ListarInventarioInsumo();
+	cout << "Seleccione producto para comprar: ";
+	cin >> productoSeleccionado;
+	codigoPlanta = BuscarDatos(productoSeleccionado, "codigo");
+	cout << "\t" << serializeString(BuscarNombreInsumo(codigoPlanta), true) << endl;
+	do {
+		cout << "Cantidad de producto a comprar :";
+		cin >> cantidad;
+		existencia = BuscarDatos(productoSeleccionado, "existencia");
+		if (cantidad > existencia)
+		{
+			cout << "\nNo hay suficiente producto!\n";
+			cout << "*Puede comprar una cantidad menor o igual a: " << existencia << endl;
+		}
+	} while (cantidad > existencia);
+
+	cout << "Desea agregar producto (s/n): ";
+	cin >> agregar;
+	if (validateAnswer(agregar))
+	{
+		archivoFactura = "Facturas/factura_" + std::to_string(nFactura) + ".txt";
+		precioUnitario = BuscarDatos(productoSeleccionado, "costo");
+		EscribirArchivo2.open(archivoFactura, ios::app);
+		EscribirArchivo2
+			<< endl
+			<< 4
+			<< " "
+			<< productoSeleccionado
+			<< " "
+			<< serializeString(BuscarNombreInsumo(codigoPlanta), false)
+			<< " "
+			<< cantidad
+			<< " "
+			<< precioUnitario
+			<< " "
+			<< (precioUnitario * cantidad);
+		ActualizarExistencia(archivo, productoSeleccionado, cantidad);
+		EscribirArchivo2.close();
+	}
+
+	return 0;
+}
+
+void Insumo::ActualizarExistencia(string archivo, int codigoPlanta, int cantidad)
+{
+	LeerArchivo2.open(archivo);
+	ofstream pivote("Insumos/inventario-pivote.txt");
+	Insumo_inventario_struct datos;
+	do
+	{
+		LeerArchivo2 >> datos.correlativo >> datos.codigoInsumo2 >> datos.existencia >> datos.costo;
+		if (datos.correlativo == codigoPlanta) {
+			if (datos.correlativo > 1)
+			{
+				pivote
+					<< endl
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoInsumo2
+					<< " "
+					<< (datos.existencia - cantidad)
+					<< " "
+					<< datos.costo;
+			}
+			else
+			{
+				pivote
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoInsumo2
+					<< " "
+					<< (datos.existencia - cantidad)
+					<< " "
+					<< datos.costo;
+			}
+		}
+		else
+		{
+			if (datos.correlativo > 1)
+			{
+				pivote
+					<< endl
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoInsumo2
+					<< " "
+					<< datos.existencia
+					<< " "
+					<< datos.costo;
+			}
+			else
+			{
+				pivote
+					<< datos.correlativo
+					<< " "
+					<< datos.codigoInsumo2
+					<< " "
+					<< datos.existencia
+					<< " "
+					<< datos.costo;
+			}
+		}
+	} while (!LeerArchivo2.eof());
+
+	LeerArchivo2.close();
+	pivote.close();
+
+	const char *cstr = archivo.c_str();
+	remove(cstr);
+	rename("Insumos/inventario-pivote.txt", cstr);
+	return;
+}

@@ -4,3 +4,5 @@
 4 Planta-de-baja *Descripcion-no-disponible
 5 Canela ayuda-a-mejorar-el-dolor-de-garganta
 6 Aniz sirve-para-aliviar-el-dolor-de-rodilla
+7 Apazote sirve-para-el-dolor-de-estomago
+8 manzana test

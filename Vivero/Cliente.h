@@ -3,20 +3,16 @@
 class Cliente
 {
 public:
-	void RegistrarCliente();
+	void RegistrarCliente(std::string nit);
 	void MostrarCliente();
 	void ModificarCliente();
 	void CambioEstado();
 	void CambioEstado(bool alta);
-
-	void InventarioCliente();
-	void ListarInventarioCliente();
+	bool ClienteDuplicado(std::string nombre);
+	std::string BuscarClientePorNit(std::string nit);
 
 private:
 	int Correlativo();
-	int CorrelativoInventario();
-	bool ClienteDuplicado(std::string nombre);
 	void EliminarDeHistorial(std::string historial, int codigoCliente);
-	bool ClienteEnInventario(int codigoCliente);
 	std::string BuscarNombreCliente(int codigoCliente);
 }; 

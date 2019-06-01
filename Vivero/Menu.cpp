@@ -8,6 +8,7 @@
 #include "Helpers.h"
 #include "Insumo.h"
 #include "Cliente.h"
+#include "Factura.h"
 
 //Namespaces
 using namespace std;
@@ -16,6 +17,7 @@ using namespace std;
 Planta _planta;
 Insumo _Insumo;
 Cliente _Cliente;
+Factura _Factura;
 
 int opcion = 0;
 string answer;
@@ -29,7 +31,8 @@ int Menu::MenuPrincipal()
 	cout << "3) Inventario.\n";
 	cout << "4) Clientes.\n";
 	cout << "5) Facturacion.\n";
-	cout << "6) Salir.\n";
+	cout << "6) Listado de facturas. \n";
+	cout << "7) Salir.\n";
 	cout << "\tSeleccione una opcion: ";
 	cin >> opcion;
 
@@ -55,7 +58,14 @@ void Menu::MenuPrincipalOpciones(int opcion)
 		//Hector
 		MenuClientesOpciones(MenuClientes());
 		break;
-
+	case 5: 
+		_Factura.CrearFactura();
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+	case 6:
+		_Factura.ListadoFacturas();
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
 	}
 }
 
@@ -346,7 +356,7 @@ void Menu::MenuClientesOpciones(int opcion)
 	switch (opcion)
 	{
 	case 1:
-		_Cliente.RegistrarCliente();
+		_Cliente.RegistrarCliente("");
 		cout << "\n\nDesea registrar otro cliente (s/n): ";
 		cin >> answer;
 		if (validateAnswer(answer)) { MenuClientesOpciones(1); }

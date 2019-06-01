@@ -3,10 +3,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <iomanip>
 
 //Librerias internas
 #include "Helpers.h"
 #include "Cliente.h"
+#include "Factura.h"
 
 //Namespaces
 using namespace std;
@@ -15,8 +17,9 @@ using namespace std;
 struct Cliente_struct
 {
 	int numeroCliente;
+	string nitCliente;
 	string nombreCliente;
-	string descripcionCliente;
+	string direccionCliente;
 };
 
 struct Cliente_inventario_struct
@@ -32,6 +35,7 @@ string nombreCliente = "";
 ifstream LeerArchivo3;
 ofstream EscribirArchivo3;
 
+Factura facturaReferencia;
 //Private
 
 int Cliente::Correlativo()
@@ -49,7 +53,7 @@ int Cliente::Correlativo()
 		bool isEnd = false;
 		do
 		{
-			LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+			LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 			contador = datos.numeroCliente;
 			isEnd = LeerArchivo3.eof();
 		} while (!isEnd);
@@ -58,33 +62,7 @@ int Cliente::Correlativo()
 	return contador + 1;
 }
 
-
-int Cliente::CorrelativoInventario()
-{
-	int contador = 0;
-	string archivo = "Clientes/inventario_cliente.txt";
-	LeerArchivo3.open(archivo);
-	Cliente_inventario_struct datos;
-	if (LeerArchivo3.fail())
-	{
-		contador = 0;
-	}
-	else
-	{
-		bool isEnd = false;
-		do
-		{
-			LeerArchivo3 >> datos.correlativo >> datos.codigoCliente2 >> datos.existencia >> datos.costo;
-			contador = datos.correlativo;
-			isEnd = LeerArchivo3.eof();
-		} while (!isEnd);
-	}
-	LeerArchivo3.close();
-	return contador + 1;
-}
-
-
-bool Cliente::ClienteDuplicado(std::string nombre)
+bool Cliente::ClienteDuplicado(std::string nit)
 {
 	bool duplicado = false;
 	Cliente_struct datos;
@@ -107,8 +85,8 @@ bool Cliente::ClienteDuplicado(std::string nombre)
 		bool isEnd = false;
 		do
 		{
-			Lectura >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
-			if (datos.nombreCliente == nombre)
+			Lectura >> datos.numeroCliente >>datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
+			if (datos.nitCliente == nit)
 			{
 				duplicado = true;
 			}
@@ -132,10 +110,10 @@ void Cliente::EliminarDeHistorial(string historial, int codigoCliente2)
 	else
 	{
 		do {
-			LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+			LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 			if (datos.numeroCliente != codigoCliente2)
 			{
-				EscribirArchivo3 << endl << datos.numeroCliente << " " << datos.nombreCliente << " " << datos.descripcionCliente;
+				EscribirArchivo3 << endl << datos.numeroCliente <<" " <<datos.nitCliente << " " << datos.nombreCliente << " " << datos.direccionCliente;
 			}
 		} while (!LeerArchivo3.eof());
 	}
@@ -149,31 +127,6 @@ void Cliente::EliminarDeHistorial(string historial, int codigoCliente2)
 	return;
 }
 
-bool Cliente::ClienteEnInventario(int codigoCliente2)
-{
-	bool existe = false;
-	Cliente_inventario_struct datos;
-	string archivo = "Clientes/inventario_cliente.txt";
-	LeerArchivo3.open(archivo);
-	if (LeerArchivo3.fail())
-	{
-		return existe;
-	}
-	else
-	{
-		do
-		{
-			LeerArchivo3 >> datos.correlativo >> datos.codigoCliente2 >> datos.existencia >> datos.costo;
-			if (datos.codigoCliente2 == codigoCliente2)
-			{
-				existe = true;
-			}
-		} while (!LeerArchivo3.eof());
-	}
-	LeerArchivo3.close();
-	return existe;
-}
-
 string Cliente::BuscarNombreCliente(int codigoCliente2)
 {
 	string nombreDeCliente;
@@ -182,7 +135,7 @@ string Cliente::BuscarNombreCliente(int codigoCliente2)
 	ifstream LeerArchivo3(archivo);
 	do
 	{
-		LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+		LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 		if (datos.numeroCliente == codigoCliente2)
 		{
 			nombreDeCliente = datos.nombreCliente;
@@ -193,30 +146,67 @@ string Cliente::BuscarNombreCliente(int codigoCliente2)
 	return nombreDeCliente;
 }
 
+string Cliente::BuscarClientePorNit(string nitCliente)
+{
+	string nombreDeCliente;
+	string archivo = "Clientes/cliente.txt";
+	Cliente_struct datos;
+	ifstream LeerArchivo3(archivo);
+	do
+	{
+		LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >>  datos.nombreCliente >> datos.direccionCliente;
+		if (datos.nitCliente == nitCliente)
+		{
+			nombreDeCliente = datos.nombreCliente;
+		}
+	} while (!LeerArchivo3.eof());
+
+	LeerArchivo3.close();
+	return nombreDeCliente;
+}
+
 //Public
-void Cliente::RegistrarCliente()
+void Cliente::RegistrarCliente(string nuevoNit)
 {
 	system("cls");
 	Cliente_struct datosCliente;
 	bool clienteDuplicado = false;
+	bool nitInvalido = false;
 	datosCliente.numeroCliente = Correlativo();
 	cout << "\nRegistro de Cliente\n\n";
-	cout << "Codigo de Cliente: " << datosCliente.numeroCliente << endl;
-	do
+	cout << "Codigo de cliente: " << datosCliente.numeroCliente << endl;
+	if (nuevoNit == "")
 	{
-		cout << "Ingrese nombre del Cliente: ";
-		while (isspace(cin.peek())) cin.ignore();
-		getline(cin, datosCliente.nombreCliente);
-		clienteDuplicado = ClienteDuplicado(serializeString(datosCliente.nombreCliente, false));
-		if (clienteDuplicado)
+		do
 		{
-			cout << "\n Cliente duplicada!\n\n";
-		}
-	} while (clienteDuplicado);
+			cout << "Ingrese nit del cliente: ";
+			while (isspace(cin.peek())) cin.ignore();
+			getline(cin, datosCliente.nitCliente);
 
-	cout << "Ingrese descripcion del Cliente: ";
+			clienteDuplicado = ClienteDuplicado(datosCliente.nitCliente);
+			nitInvalido = datosCliente.nitCliente.length() != 9;
+			if (clienteDuplicado)
+				cout << "\n\nEste nit ya se encuentra registrado\n\n";
+			if (nitInvalido)
+				cout << "\n\nNit invalido, el nit debe tener 9 caracteres\n\n";
+		} while (clienteDuplicado || nitInvalido);
+	}
+	else
+	{
+		datosCliente.nitCliente = nuevoNit;
+		cout << "Nit del cliente: " << datosCliente.nitCliente << endl;
+	}
+	
+	
+
+	cout << "Ingrese nombre y apellido del cliente: ";
 	while (isspace(cin.peek())) cin.ignore();
-	getline(cin, datosCliente.descripcionCliente);
+	getline(cin, datosCliente.nombreCliente);
+		
+
+	cout << "Ingrese direccion del cliente: ";
+	while (isspace(cin.peek())) cin.ignore();
+	getline(cin, datosCliente.direccionCliente);
 
 	string archivo2 = "Clientes/cliente.txt";
 	EscribirArchivo3.open(archivo2, ios::app);
@@ -226,18 +216,22 @@ void Cliente::RegistrarCliente()
 			<< endl
 			<< datosCliente.numeroCliente
 			<< " "
+			<< datosCliente.nitCliente
+			<< " "
 			<< serializeString(datosCliente.nombreCliente, false)
 			<< " "
-			<< serializeString(datosCliente.descripcionCliente, false);
+			<< serializeString(datosCliente.direccionCliente, false);
 	}
 	else
 	{
 		EscribirArchivo3
 			<< datosCliente.numeroCliente
 			<< " "
+			<< datosCliente.nitCliente
+			<< " "
 			<< serializeString(datosCliente.nombreCliente, false)
 			<< " "
-			<< serializeString(datosCliente.descripcionCliente, false);
+			<< serializeString(datosCliente.direccionCliente, false);
 	}
 
 	EscribirArchivo3.close();
@@ -252,7 +246,7 @@ void Cliente::MostrarCliente()
 
 	system("cls");
 	LeerArchivo3.open(archivo);
-	cout << "\nCatalogo de Clientes" << "\n";
+	cout << "\nListado de Clientes" << "\n\n";
 	if (LeerArchivo3.fail())
 	{
 		cout << "\n\n\tOcurrio un error al tratar de abrir el archivo *" << archivo << "* intente mas tarde.\n";
@@ -260,10 +254,11 @@ void Cliente::MostrarCliente()
 	else
 	{
 		do {
-			LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
-			cout << "\tCodigo de Cliente: " << datos.numeroCliente << endl;
-			cout << "\tNombre de Cliente: " << serializeString(datos.nombreCliente, true) << endl;
-			cout << "\tDescripcion de Cliente: " << serializeString(datos.descripcionCliente, true) << "\n\n";
+			LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
+			cout << "\tCodigo de cliente: " << datos.numeroCliente << endl;
+			cout << "\tNIT de cliente: " << serializeString(datos.nitCliente, true) << endl;
+			cout << "\tNombre de cliente: " << serializeString(datos.nombreCliente, true) << endl;
+			cout << "\tDescripcion de cliente: " << serializeString(datos.direccionCliente, true) << "\n\n";
 
 		} while (!LeerArchivo3.eof());
 
@@ -281,7 +276,7 @@ void Cliente::ModificarCliente()
 	bool isEnd = false;
 	bool ClienteDuplicado = false;
 	Cliente_struct datos;
-	cout << "Modificar nombre de Cliente\n";
+	cout << "Modificar nombre de Cliente\n\n";
 	string archivo = "Clientes/cliente.txt";
 	MostrarCliente();
 
@@ -294,7 +289,7 @@ void Cliente::ModificarCliente()
 	EscribirArchivo3.open("Clientes/temporal.txt");
 	do
 	{
-		LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+		LeerArchivo3 >> datos.numeroCliente >>datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 		isEnd = LeerArchivo3.eof();
 		if (datos.numeroCliente == codigoModificar && datos.nombreCliente == "Cliente-de-baja")
 		{
@@ -303,37 +298,35 @@ void Cliente::ModificarCliente()
 
 		if (datos.numeroCliente == codigoModificar && datos.nombreCliente != "Cliente-de-baja")
 		{
-			cout << "Numero de Cliente: " << datos.numeroCliente << endl;
-			cout << "Nombre de Cliente: " << serializeString(datos.nombreCliente, true) << endl;
-			cout << "Descripcion de Cliente: " << serializeString(datos.descripcionCliente, true) << endl;
+			cout << "Numero de cliente: " << datos.numeroCliente << endl;
+			cout << "NIT de cliente: " << datos.nitCliente << endl;
+			cout << "Nombre de cliente: " << serializeString(datos.nombreCliente, true) << endl;
+			cout << "Descripcion de cliente: " << serializeString(datos.direccionCliente, true) << endl;
 			cout << "\n\n-----------------------------------------------------------\n\n";
-			do {
-				cout << "Ingrese nuevo nombre de Cliente: ";
-				while (isspace(cin.peek())) cin.ignore();
-				getline(cin, datos.nombreCliente);
-				//ClienteDuplicado = ClienteDuplicado(serializeString(datos.nombreCliente, false));
-				if (ClienteDuplicado)
-				{
-					cout << "\n Cliente duplicada!\n\n";
-				}
-			} while (ClienteDuplicado);
+			cout << "Ingrese nuevo nombre de Cliente: ";
+			while (isspace(cin.peek())) cin.ignore();
+			getline(cin, datos.nombreCliente);
 
 			if (datos.numeroCliente > 1) {
 				EscribirArchivo3
 					<< endl
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< serializeString(datos.nombreCliente, false)
 					<< " "
-					<< serializeString(datos.descripcionCliente, false);
+					<< serializeString(datos.direccionCliente, false);
 			}
 			else {
 				EscribirArchivo3
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< serializeString(datos.nombreCliente, false)
 					<< " "
-					<< serializeString(datos.descripcionCliente, false);
+					<< serializeString(datos.direccionCliente, false);
 			}
 		}
 		else
@@ -343,17 +336,21 @@ void Cliente::ModificarCliente()
 					<< endl
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< serializeString(datos.nombreCliente, false)
 					<< " "
-					<< serializeString(datos.descripcionCliente, false);
+					<< serializeString(datos.direccionCliente, false);
 			}
 			else {
 				EscribirArchivo3
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< serializeString(datos.nombreCliente, false)
 					<< " "
-					<< serializeString(datos.descripcionCliente, false);
+					<< serializeString(datos.direccionCliente, false);
 			}
 		}
 	} while (!isEnd);
@@ -377,8 +374,7 @@ void Cliente::CambioEstado()
 	system("cls");
 	int codigoModificar;
 	string archivo = "Clientes/cliente.txt";
-	cout << "Dar de baja Cliente\n";
-	cout << "Tipo de Cliente: " << nombreCliente << "\n\n";
+	cout << "Dar de baja Cliente\n\n";
 	MostrarCliente();
 	cout << "\nIngrese el codigo a modificar: ";
 	cin >> codigoModificar;
@@ -393,28 +389,32 @@ void Cliente::CambioEstado()
 
 	do
 	{
-		LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+		LeerArchivo3 >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 		if (datos.numeroCliente == codigoModificar && datos.nombreCliente != "Cliente-de-baja")
 		{
-			EscribirArchivo3 << endl << datos.numeroCliente << " " << datos.nombreCliente << " " << datos.descripcionCliente;
+			EscribirArchivo3 << endl << datos.numeroCliente <<" " <<datos.nitCliente << " " << datos.nombreCliente << " " << datos.direccionCliente;
 			if (datos.numeroCliente > 1)
 			{
 				nuevoArchivo2
 					<< endl
 					<< datos.numeroCliente
 					<< " "
+					<< "NIT-no-disponible"
+					<< " "
 					<< "Cliente-de-baja"
 					<< " "
-					<< "*Descripcion-no-disponible";
+					<< "*Direccion-no-disponible";
 			}
 			else
 			{
 				nuevoArchivo2
 					<< datos.numeroCliente
 					<< " "
+					<< "NIT-no-disponible"
+					<< " "
 					<< "Cliente-de-baja"
 					<< " "
-					<< "*Descripcion-no-disponible";
+					<< "*Direccion-no-disponible";
 			}
 		}
 		else
@@ -425,18 +425,22 @@ void Cliente::CambioEstado()
 					<< endl
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< datos.nombreCliente
 					<< " "
-					<< datos.descripcionCliente;
+					<< datos.direccionCliente;
 			}
 			else
 			{
 				nuevoArchivo2
 					<< datos.numeroCliente
 					<< " "
+					<< datos.nitCliente
+					<< " "
 					<< datos.nombreCliente
 					<< " "
-					<< datos.descripcionCliente;
+					<< datos.direccionCliente;
 			}
 
 		}
@@ -469,14 +473,15 @@ void Cliente::CambioEstado(bool alta)
 
 	EscribirArchivo3.open("Clientes/temporal.txt");
 
-	string nombreReal, descripcionReal;
+	string nombreReal, direccionReal, nitReal;
 	do
 	{
-		historial >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+		historial >> datos.numeroCliente >> datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 		if (datos.numeroCliente == codigoModificar)
 		{
 			nombreReal = datos.nombreCliente;
-			descripcionReal = datos.descripcionCliente;
+			nitReal = datos.nitCliente;
+			direccionReal = datos.direccionCliente;
 		}
 
 	} while (!historial.eof());
@@ -484,14 +489,14 @@ void Cliente::CambioEstado(bool alta)
 
 	do
 	{
-		LeerArchivo3 >> datos.numeroCliente >> datos.nombreCliente >> datos.descripcionCliente;
+		LeerArchivo3 >> datos.numeroCliente >>datos.nitCliente >> datos.nombreCliente >> datos.direccionCliente;
 		if (datos.numeroCliente == codigoModificar)
 		{
 
 			if (datos.numeroCliente > 1)
-				EscribirArchivo3 << endl << datos.numeroCliente << " " << nombreReal << " " << descripcionReal;
+				EscribirArchivo3 << endl << datos.numeroCliente <<" " << nitReal << " " << nombreReal << " " << direccionReal;
 			else
-				EscribirArchivo3 << datos.numeroCliente << " " << nombreReal << " " << descripcionReal;
+				EscribirArchivo3 << datos.numeroCliente <<" " <<nitReal << " " << nombreReal << " " << direccionReal;
 
 		}
 		else
@@ -501,16 +506,20 @@ void Cliente::CambioEstado(bool alta)
 				<< endl
 				<< datos.numeroCliente
 				<< " "
+				<< datos.nitCliente
+				<< " "
 				<< datos.nombreCliente
 				<< " "
-				<< datos.descripcionCliente;
+				<< datos.direccionCliente;
 			else
 				EscribirArchivo3
 				<< datos.numeroCliente
 				<< " "
+				<< datos.nitCliente
+				<< " "
 				<< datos.nombreCliente
 				<< " "
-				<< datos.descripcionCliente;
+				<< datos.direccionCliente;
 		}
 	} while (!LeerArchivo3.eof());
 
@@ -522,86 +531,4 @@ void Cliente::CambioEstado(bool alta)
 	remove(cstr);
 	rename("Clientes/temporal.txt", cstr);
 	EliminarDeHistorial(historico, codigoModificar);
-}
-
-void Cliente::InventarioCliente()
-{
-	system("cls");
-	int codigoCliente2;
-	string archivo = "Clientes/inventario_cliente.txt";
-	Cliente_inventario_struct datos;
-	cout << "Registro de inventario de Cliente: " << nombreCliente << endl;
-	MostrarCliente();
-	cout << "\n\n ---------------------------------------------\n";
-	cout << "Ingrese codigo de Cliente: ";
-	cin >> codigoCliente2;
-
-	if (ClienteEnInventario(codigoCliente2))
-	{
-		cout << "\t\nCliente ya existe en inventario\n\n";
-		system("pause");
-	}
-	else
-	{
-		if (BuscarNombreCliente(codigoCliente2) == "Cliente-de-baja")
-		{
-			cout << "\t\nNo se puede realizar la operacion si el Cliente esta de baja \n\n";
-			system("pause");
-		}
-		else
-		{
-			datos.correlativo = CorrelativoInventario();
-			cout << "Correlativo: " << datos.correlativo << endl;
-			datos.codigoCliente2 = codigoCliente2;
-			std::cout << "Ingrese existencia: ";
-			cin >> datos.existencia;
-			std::cout << "Ingrese precio: ";
-			cin >> datos.costo;
-
-			EscribirArchivo3.open(archivo, ios::app);
-			if (datos.correlativo > 1)
-			{
-				EscribirArchivo3 << endl << datos.correlativo << " " << datos.codigoCliente2 << " " << datos.existencia << " " << datos.costo;
-			}
-			else
-			{
-				EscribirArchivo3 << datos.correlativo << " " << datos.codigoCliente2 << " " << datos.existencia << " " << datos.costo;
-			}
-			EscribirArchivo3.close();
-			cout << "\n\tRegistro realizado con exito!";
-		}
-	}
-	return;
-}
-
-void Cliente::ListarInventarioCliente()
-{
-	system("cls");
-	int codigoCliente2;
-	string archivo = "Clientes/inventario_cliente.txt";
-	Cliente_inventario_struct datos;
-	cout << "Listado de inventario Cliente: " << nombreCliente << endl << endl;
-
-	LeerArchivo3.open(archivo);
-
-	if (LeerArchivo3.fail())
-	{
-		cout << "\t\nOcurrio un erro al tratar de abrir el archivo\n\n";
-	}
-	else
-	{
-		do
-		{
-			LeerArchivo3 >> datos.correlativo >> datos.codigoCliente2 >> datos.existencia >> datos.costo;
-			cout << "\tCorrelativo: " << datos.correlativo << endl;
-			cout << "\tCodigo de Cliente: " << datos.codigoCliente2 << endl;
-			cout << "\tNombre de Cliente: " << serializeString(BuscarNombreCliente(datos.codigoCliente2),
-				true) << endl;
-			cout << "\tExistencia: " << datos.existencia << endl;
-			cout << "\tCosto: " << "Q." << datos.costo << endl;
-			cout << "\t--------------------------------------------------------------------\n\n";
-		} while (!LeerArchivo3.eof());
-	}
-	LeerArchivo3.close();
-	return;
 }
