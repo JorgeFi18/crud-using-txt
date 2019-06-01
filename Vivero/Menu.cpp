@@ -32,7 +32,9 @@ int Menu::MenuPrincipal()
 	cout << "4) Clientes.\n";
 	cout << "5) Facturacion.\n";
 	cout << "6) Listado de facturas. \n";
-	cout << "7) Salir.\n";
+	cout << "7) Listar facturas por nit. \n";
+	cout << "8) Listar facturas por planta. \n";
+	cout << "9) Salir.\n";
 	cout << "\tSeleccione una opcion: ";
 	cin >> opcion;
 
@@ -64,6 +66,14 @@ void Menu::MenuPrincipalOpciones(int opcion)
 		break;
 	case 6:
 		_Factura.ListadoFacturas();
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+	case 7:
+		_Factura.ListarFacturasPorNit();
+		MenuPrincipalOpciones(MenuPrincipal());
+		break;
+	case 8:
+		_Factura.ListarFacturaPorPlanta();
 		MenuPrincipalOpciones(MenuPrincipal());
 		break;
 	}

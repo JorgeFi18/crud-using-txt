@@ -11,7 +11,10 @@ private:
 	void AgregarProductos(int nFactura);
 	void AgregarProductosFactura(int tipoProducto, int numeroFactura);
 	void MostrarDetalleFactura(int numerofactura);
+	int MostrarDetalleFactura(int numerofactura, int tipoPlanta);
 public:
 	void CrearFactura();
 	void ListadoFacturas();
+	void ListarFacturasPorNit();
+	void ListarFacturaPorPlanta();
 };

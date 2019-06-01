@@ -163,6 +163,77 @@ void Factura::ListadoFacturas()
 	LeerArchivo4.close();
 }
 
+void Factura::ListarFacturasPorNit()
+{
+	system("cls");
+	string nit;
+	cout << "Ingrese nit: ";
+	while (isspace(cin.peek())) cin.ignore();
+	getline(cin, nit);
+
+	if (_Cliente2.ClienteDuplicado(nit))
+	{
+		LeerArchivo4.open("Facturas/listado_facturas.txt");
+		int seleccion;
+		if (LeerArchivo4.fail())
+		{
+			cout << "\t\nOcurrio un error tratando de abrir el listado de facturas!";
+		}
+		else
+		{
+			Encabezado_factura datos;
+			do
+			{
+				LeerArchivo4 >> datos.numero >> datos.nit >> datos.fecha >> datos.total;
+				if (datos.nit == nit)
+				{
+					cout << "Numero de factura: " << datos.numero << endl;
+					cout << "Fecha de emision: " << datos.fecha << endl;
+					cout << "Nombre de cliente: " << serializeString(_Cliente2.BuscarClientePorNit(datos.nit), true) << endl;
+					cout << "------------------------------------------- \n\n";
+					
+				}
+			} while (!LeerArchivo4.eof());
+		}
+		cout << "\n\t Seleccione factura a mostrar: ";
+		cin >> seleccion;
+		system("cls");
+		cout << "\n\n";
+		MostrarDetalleFactura(seleccion);
+		system("pause");
+		LeerArchivo4.close();
+	}
+	else
+	{
+		cout << "El cliente no existe!\n\n";
+		system("pause");
+	}
+}
+
+void Factura::ListarFacturaPorPlanta()
+{
+	system("cls");
+	int tipoPlanta;
+	int contador = 1;
+	int granTotal= 0;
+	cout << "1) Planta medicinal\n";
+	cout << "2) Planta silvestre\n";
+	cout << "3) Planta ornamental\n";
+	cout << "\tIngrese tipo de planta: ";
+	cin >> tipoPlanta;
+	cout << "\n\n\n";
+	Encabezado_factura datos;
+	LeerArchivo4.open("Facturas/listado_facturas.txt");
+	do {
+		LeerArchivo4 >> datos.numero >> datos.nit >> datos.fecha >> datos.total;
+		granTotal += MostrarDetalleFactura(datos.numero, tipoPlanta);
+	} while (!LeerArchivo4.eof());
+
+	cout << "\n\n\t\t\tTotal: Q" << granTotal << endl;
+	LeerArchivo4.close();
+	system("pause");
+}
+
 void Factura::RegistrarFactura(Factura_struct info) 
 {
 	EscribirArchivo4.open("Facturas/listado_facturas.txt", ios::app);
@@ -262,4 +333,38 @@ void Factura::MostrarDetalleFactura(int nFactura)
 	cout << "\t\t\t\t\tTotal: Q." <<total <<endl;
 	leerDetalle.close();
 	return;
+}
+
+int Factura::MostrarDetalleFactura(int nFactura, int tipoPlanta)
+{
+	string numerofactura = "Facturas/factura_" + std::to_string(nFactura) + ".txt";
+	ifstream leerDetalle(numerofactura);
+	int total = 0;
+
+	Detalle_factura_producto datos;
+	string cantidad = "";
+
+	if (!leerDetalle.fail())
+	{
+		do
+		{
+			leerDetalle >> datos.tipoProducto >> datos.codigoProducto >> datos.nombreProducto >> datos.cantidad >> datos.precioUnitario >> datos.subTotal;
+			if (datos.tipoProducto == tipoPlanta)
+			{
+				if (datos.cantidad < 10)
+				{
+					cout << "0" << datos.cantidad;
+				}
+				else
+				{
+					cout << datos.cantidad;
+				}
+				cout << "| " << datos.nombreProducto << "(Q." << datos.precioUnitario << ")";
+				cout << " subtotal - (Q." << datos.subTotal << ")" << endl;
+				total += datos.subTotal;
+			}
+		} while (!leerDetalle.eof());
+	}
+	leerDetalle.close();
+	return total;
 }
